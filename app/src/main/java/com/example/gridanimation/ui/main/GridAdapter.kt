@@ -1,5 +1,9 @@
 package com.example.gridanimation.ui.main
 
+import android.animation.Animator
+import android.animation.AnimatorInflater
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -24,9 +28,18 @@ class GridAdapter(
         ('A'..'Z').forEach { alphabetList.add(it) }
     }
 
-    fun removeAlphabet(position: Int) {
-        alphabetList.removeAt(position)
-        notifyItemRemoved(position)
+    fun removeAlphabet(position: Int, view: View) {
+        val anim = (AnimatorInflater.loadAnimator(context, R.animator.item_delete) as ObjectAnimator).also {
+            it.target = view
+            it.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    alphabetList.removeAt(position)
+                    notifyDataSetChanged()
+                }
+            })
+        }
+        anim.start()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GridViewHolder {
@@ -51,7 +64,7 @@ class GridAdapter(
         fun bind(position: Int) {
             textView.text = alphabetList[position].toString()
             view.setOnClickListener {
-                itemClickListener.onItemClick(position)
+                itemClickListener.onItemClick(position, view)
             }
         }
     }

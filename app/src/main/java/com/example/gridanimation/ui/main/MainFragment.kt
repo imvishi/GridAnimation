@@ -40,8 +40,8 @@ class MainFragment : Fragment(), ItemClickListener {
         }
     }
 
-    override fun onItemClick(position: Int) {
-        gridAdapter.removeAlphabet(position)
+    override fun onItemClick(position: Int, view: View) {
+        gridAdapter.removeAlphabet(position, view)
     }
 
     /**
