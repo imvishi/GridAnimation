@@ -8,6 +8,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gridanimation.R
 import kotlinx.android.synthetic.main.grid_alphabet.view.*
@@ -22,6 +23,7 @@ class GridAdapter(
 
 
     var alphabetList = mutableListOf<Char>()
+    var itemClickedPosition = -1
     val margin = context.resources.getDimension(R.dimen.item_margin).toInt()
 
     init {
@@ -29,13 +31,14 @@ class GridAdapter(
     }
 
     fun removeAlphabet(position: Int, view: View) {
+        itemClickedPosition = position
         val anim = (AnimatorInflater.loadAnimator(context, R.animator.item_delete) as ObjectAnimator).also {
             it.target = view
             it.addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {
                     super.onAnimationEnd(animation)
                     alphabetList.removeAt(position)
-                    notifyDataSetChanged()
+                    notifyItemRangeChanged(position, alphabetList.size + 1)
                 }
             })
         }
@@ -65,6 +68,13 @@ class GridAdapter(
             textView.text = alphabetList[position].toString()
             view.setOnClickListener {
                 itemClickListener.onItemClick(position, view)
+            }
+            val anim = AnimationUtils.loadAnimation(context, R.anim.item_animator)
+            if (itemClickedPosition != -1) {
+                val duration = (position - itemClickedPosition)*500L
+                anim.duration = 500L
+                anim.startOffset = duration + 500
+                view.startAnimation(anim)
             }
         }
     }
