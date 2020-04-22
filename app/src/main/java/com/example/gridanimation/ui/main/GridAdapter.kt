@@ -8,7 +8,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
+import android.view.animation.TranslateAnimation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gridanimation.R
 import kotlinx.android.synthetic.main.grid_alphabet.view.*
@@ -21,7 +21,7 @@ class GridAdapter(
     val itemClickListener: ItemClickListener
 ) : RecyclerView.Adapter<GridAdapter.GridViewHolder>() {
 
-
+    private var parentViewSize = 0
     var alphabetList = mutableListOf<Char>()
     var itemClickedPosition = -1
     val margin = context.resources.getDimension(R.dimen.item_margin).toInt()
@@ -46,12 +46,12 @@ class GridAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GridViewHolder {
-        val viewSize = minOf(parent.measuredHeight, parent.measuredWidth) - SPAN_COUNT*margin * 2
+        parentViewSize = minOf(parent.measuredHeight, parent.measuredWidth) - SPAN_COUNT*margin * 2
         val view = LayoutInflater.from(context).inflate(
             R.layout.grid_alphabet, parent, false
         ).apply {
-            layoutParams.width = viewSize / SPAN_COUNT
-            layoutParams.height = viewSize / SPAN_COUNT
+            layoutParams.width = parentViewSize / SPAN_COUNT
+            layoutParams.height = parentViewSize / SPAN_COUNT
         }
         return GridViewHolder(view)
     }
@@ -69,9 +69,14 @@ class GridAdapter(
             view.setOnClickListener {
                 itemClickListener.onItemClick(position, view)
             }
-            val anim = AnimationUtils.loadAnimation(context, R.anim.item_animator)
+            val fromDelta = view.layoutParams.height.toFloat() + 2 * margin
+            val anim = if (position % SPAN_COUNT == SPAN_COUNT - 1) {
+                TranslateAnimation(-fromDelta * (SPAN_COUNT - 1), 0f, fromDelta, 0f)
+            } else {
+                TranslateAnimation(fromDelta, 0f, 0f, 0f)
+            }
             if (itemClickedPosition != -1) {
-                val duration = (position - itemClickedPosition)*500L
+                val duration = (position - itemClickedPosition) * 500L
                 anim.duration = 500L
                 anim.startOffset = duration + 500
                 view.startAnimation(anim)
