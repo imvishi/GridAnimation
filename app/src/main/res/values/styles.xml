@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="Configuration" parent="android:Widget.EditText">
+        <item name="android:layout_margin">20dp</item>
+        <item name="android:lines">1</item>
+        <item name="android:gravity">top|left</item>
+        <item name="android:background">@android:drawable/editbox_background_normal</item>
+    </style>
+
 </resources>

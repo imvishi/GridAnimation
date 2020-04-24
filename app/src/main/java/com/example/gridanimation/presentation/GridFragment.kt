@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gridanimation.R
@@ -17,12 +18,15 @@ class GridFragment : Fragment(),
 
     companion object {
         fun newInstance() = GridFragment()
+        private const val TAG = "GridFragment"
     }
 
     private lateinit var gridAdapter: GridAdapter
+    private lateinit var viewModel: ConfrigurationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(requireActivity()).get(ConfrigurationViewModel::class.java)
         gridAdapter = GridAdapter(
             requireContext(),
             this
@@ -37,12 +41,28 @@ class GridFragment : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        gridAdapter.apply {
+            updateGridSpacing(viewModel.gridSpacing)
+            updateAnimationDuration(viewModel.animationDuration)
+            updateAlphabetList(viewModel.alphabetList)
+        }
         val spanCount = ScreenUtils.getSpanCount(requireContext())
         alphabetRecycleView.apply {
             adapter = gridAdapter
             layoutManager = GridLayoutManager(requireContext(), spanCount)
             addItemDecoration(AlphabetItemDecorator())
         }
+        configure.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.container, ConfrigurationFragment.newInstance())
+                .addToBackStack(TAG)
+                .commit()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.alphabetList = this.gridAdapter.alphabetList
     }
 
     override fun onItemClick(position: Int, view: View) {
@@ -54,7 +74,7 @@ class GridFragment : Fragment(),
      */
     inner class AlphabetItemDecorator : RecyclerView.ItemDecoration() {
 
-        private val margin = resources.getDimension(R.dimen.item_margin).toInt()
+        private val margin = viewModel.gridSpacing
 
         override fun getItemOffsets(
             outRect: Rect,

@@ -22,14 +22,11 @@ class GridAdapter(
     val itemClickListener: ItemClickListener
 ) : RecyclerView.Adapter<GridAdapter.GridViewHolder>() {
 
+    private var margin = 0
+    private var animationDuration = 500L
     var alphabetList = mutableListOf<Char>()
     var itemClickedPosition = -1
-    val margin = context.resources.getDimension(R.dimen.item_margin).toInt()
     val spanCount = ScreenUtils.getSpanCount(context)
-
-    init {
-        ('A'..'Z').forEach { alphabetList.add(it) }
-    }
 
     fun removeAlphabet(position: Int, view: View) {
         itemClickedPosition = position
@@ -44,6 +41,30 @@ class GridAdapter(
             })
         }
         anim.start()
+    }
+
+    /**
+     * method used to update the grid spacing
+     */
+    fun updateGridSpacing(spacing: Int) {
+        margin = spacing
+    }
+
+    /**
+     * method used to update the animation duration
+     */
+    fun updateAnimationDuration(animationDuration: Long) {
+        this.animationDuration = animationDuration
+    }
+
+    /**
+     * method used to update the alphabet list
+     */
+    fun updateAlphabetList(list: List<Char>) {
+        alphabetList = list.toMutableList()
+        itemClickedPosition = -1
+        notifyDataSetChanged()
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GridViewHolder {
@@ -77,9 +98,9 @@ class GridAdapter(
                 TranslateAnimation(fromDelta, 0f, 0f, 0f)
             }
             if (itemClickedPosition != -1) {
-                val duration = (position - itemClickedPosition) * 500L
-                anim.duration = 500L
-                anim.startOffset = duration + 500
+                val duration = (position - itemClickedPosition) * animationDuration
+                anim.duration = animationDuration
+                anim.startOffset = duration + animationDuration
                 view.startAnimation(anim)
             }
         }

@@ -4,11 +4,27 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".presentation.GridFragment">
 
+    <LinearLayout
+        android:id="@+id/configure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/alphabet_box"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Configure" />
+    </LinearLayout>
+
+
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_margin="@dimen/item_margin"
         android:id="@+id/alphabetRecycleView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/item_margin" />
 </LinearLayout>
