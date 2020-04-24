@@ -1,4 +1,4 @@
-package com.example.gridanimation.ui.main
+package com.example.gridanimation.presentation
 
 import android.view.View
 

@@ -1,4 +1,4 @@
-package com.example.gridanimation.ui.main
+package com.example.gridanimation.presentation
 
 import android.graphics.Rect
 import android.os.Bundle
@@ -9,20 +9,24 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gridanimation.R
+import com.example.gridanimation.utils.ScreenUtils
 import kotlinx.android.synthetic.main.main_fragment.*
 
-const val SPAN_COUNT = 4
-class MainFragment : Fragment(), ItemClickListener {
+class GridFragment : Fragment(),
+    ItemClickListener {
 
     companion object {
-        fun newInstance() = MainFragment()
+        fun newInstance() = GridFragment()
     }
 
     private lateinit var gridAdapter: GridAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        gridAdapter = GridAdapter(requireContext(), this)
+        gridAdapter = GridAdapter(
+            requireContext(),
+            this
+        )
     }
 
     override fun onCreateView(
@@ -33,9 +37,10 @@ class MainFragment : Fragment(), ItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val spanCount = ScreenUtils.getSpanCount(requireContext())
         alphabetRecycleView.apply {
             adapter = gridAdapter
-            layoutManager = GridLayoutManager(requireContext(), SPAN_COUNT)
+            layoutManager = GridLayoutManager(requireContext(), spanCount)
             addItemDecoration(AlphabetItemDecorator())
         }
     }

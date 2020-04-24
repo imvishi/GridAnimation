@@ -1,4 +1,4 @@
-package com.example.gridanimation.ui.main
+package com.example.gridanimation.presentation
 
 import android.animation.Animator
 import android.animation.AnimatorInflater
@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.animation.TranslateAnimation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gridanimation.R
+import com.example.gridanimation.utils.ScreenUtils
 import kotlinx.android.synthetic.main.grid_alphabet.view.*
 
 /**
@@ -21,10 +22,10 @@ class GridAdapter(
     val itemClickListener: ItemClickListener
 ) : RecyclerView.Adapter<GridAdapter.GridViewHolder>() {
 
-    private var parentViewSize = 0
     var alphabetList = mutableListOf<Char>()
     var itemClickedPosition = -1
     val margin = context.resources.getDimension(R.dimen.item_margin).toInt()
+    val spanCount = ScreenUtils.getSpanCount(context)
 
     init {
         ('A'..'Z').forEach { alphabetList.add(it) }
@@ -38,7 +39,7 @@ class GridAdapter(
                 override fun onAnimationEnd(animation: Animator?) {
                     super.onAnimationEnd(animation)
                     alphabetList.removeAt(position)
-                    notifyItemRangeChanged(position, alphabetList.size + 1)
+                    notifyDataSetChanged()
                 }
             })
         }
@@ -46,12 +47,12 @@ class GridAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GridViewHolder {
-        parentViewSize = minOf(parent.measuredHeight, parent.measuredWidth) - SPAN_COUNT*margin * 2
+        val parentViewSize = parent.measuredWidth - spanCount * margin * 2
         val view = LayoutInflater.from(context).inflate(
             R.layout.grid_alphabet, parent, false
         ).apply {
-            layoutParams.width = parentViewSize / SPAN_COUNT
-            layoutParams.height = parentViewSize / SPAN_COUNT
+            layoutParams.width = parentViewSize / spanCount
+            layoutParams.height = parentViewSize / spanCount
         }
         return GridViewHolder(view)
     }
@@ -70,8 +71,8 @@ class GridAdapter(
                 itemClickListener.onItemClick(position, view)
             }
             val fromDelta = view.layoutParams.height.toFloat() + 2 * margin
-            val anim = if (position % SPAN_COUNT == SPAN_COUNT - 1) {
-                TranslateAnimation(-fromDelta * (SPAN_COUNT - 1), 0f, fromDelta, 0f)
+            val anim = if (position % spanCount == spanCount- 1) {
+                TranslateAnimation(-fromDelta * (spanCount - 1), 0f, fromDelta, 0f)
             } else {
                 TranslateAnimation(fromDelta, 0f, 0f, 0f)
             }
