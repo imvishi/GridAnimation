@@ -1,5 +1,6 @@
 package com.example.gridanimation.presentation
 
+import android.animation.*
 import android.graphics.Rect
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -60,13 +61,27 @@ class GridFragment : Fragment(),
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        viewModel.alphabetList = this.gridAdapter.alphabetList
-    }
-
-    override fun onItemClick(position: Int, view: View) {
-        gridAdapter.removeAlphabet(position, view)
+    override fun onItemClick(position: Int) {
+        val view = alphabetRecycleView.findViewHolderForAdapterPosition(position)!!.itemView
+        (AnimatorInflater.loadAnimator(context, R.animator.item_delete) as ObjectAnimator).also {
+            it.target = view
+            it.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    gridAdapter.let {
+                        it.updateItemClickedPosition(position)
+                        it.alphabetList.removeAt(position)
+                        it.notifyDataSetChanged()
+                    }
+                    viewModel.alphabetList.removeAt(position)
+                    // Removing the view from recycler view cache after item deletion, so that it
+                    // can't be reused by recycle view. After animation This view has rotated
+                    // with 180 degree and will show reversed alphabet if reused.
+                    alphabetRecycleView.removeView(view)
+                }
+            })
+            it.start()
+        }
     }
 
     /**
