@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gridanimation.R
 import com.example.gridanimation.utils.ScreenUtils
-import kotlinx.android.synthetic.main.main_fragment.*
+import kotlinx.android.synthetic.main.fragment_main.*
 
 class GridFragment : Fragment(),
     ItemClickListener {
@@ -23,22 +23,19 @@ class GridFragment : Fragment(),
     }
 
     private lateinit var gridAdapter: GridAdapter
-    private lateinit var viewModel: ConfrigurationViewModel
+    private lateinit var viewModel: ConfigurationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(ConfrigurationViewModel::class.java)
-        gridAdapter = GridAdapter(
-            requireContext(),
-            this
-        )
+        viewModel = ViewModelProvider(requireActivity()).get(ConfigurationViewModel::class.java)
+        gridAdapter = GridAdapter(ScreenUtils.getSpanCount(requireContext()), this)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ) = inflater.inflate(R.layout.main_fragment, container, false)
+    ): View = inflater.inflate(R.layout.fragment_main, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,21 +45,21 @@ class GridFragment : Fragment(),
             updateAlphabetList(viewModel.alphabetList)
         }
         val spanCount = ScreenUtils.getSpanCount(requireContext())
-        alphabetRecycleView.apply {
+        rv_alphabet.apply {
             adapter = gridAdapter
             layoutManager = GridLayoutManager(requireContext(), spanCount)
             addItemDecoration(AlphabetItemDecorator())
         }
         configure.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.container, ConfrigurationFragment.newInstance())
+                .replace(R.id.container, ConfigurationFragment.newInstance())
                 .addToBackStack(TAG)
                 .commit()
         }
     }
 
     override fun onItemClick(position: Int) {
-        val view = alphabetRecycleView.findViewHolderForAdapterPosition(position)!!.itemView
+        val view = rv_alphabet.findViewHolderForAdapterPosition(position)!!.itemView
         (AnimatorInflater.loadAnimator(context, R.animator.item_delete) as ObjectAnimator).also {
             it.target = view
             it.addListener(object : AnimatorListenerAdapter() {
@@ -77,7 +74,7 @@ class GridFragment : Fragment(),
                     // Removing the view from recycler view cache after item deletion, so that it
                     // can't be reused by recycle view. After animation This view has rotated
                     // with 180 degree and will show reversed alphabet if reused.
-                    alphabetRecycleView.removeView(view)
+                    rv_alphabet.removeView(view)
                 }
             })
             it.start()

@@ -1,7 +1,7 @@
 package com.example.gridanimation.presentation
 
 /**
- * Iterface to handle recycle view item click
+ * Interface to handle recycle view item click
  */
 interface ItemClickListener {
 

@@ -7,37 +7,37 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.gridanimation.R
-import kotlinx.android.synthetic.main.configuration_fragment.*
+import kotlinx.android.synthetic.main.fragment_coniguration.*
 
 /**
  * screen to update the grid configuration
  */
-class ConfrigurationFragment : Fragment() {
+class ConfigurationFragment : Fragment() {
 
     companion object {
-        fun newInstance() = ConfrigurationFragment()
+        fun newInstance() = ConfigurationFragment()
     }
 
-    private lateinit var viewModel: ConfrigurationViewModel
+    private lateinit var viewModel: ConfigurationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(ConfrigurationViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(ConfigurationViewModel::class.java)
     }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ) = inflater.inflate(R.layout.configuration_fragment, container, false)
+    ): View = inflater.inflate(R.layout.fragment_coniguration, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        submit.setOnClickListener {
-            if (animationDuration.text.isNotEmpty()) {
-                viewModel.animationDuration = animationDuration.text.toString().toLong()
+        bt_submit.setOnClickListener {
+            if (et_animation_duration.text.isNotEmpty()) {
+                viewModel.animationDuration = et_animation_duration.text.toString().toLong()
             }
-            if (gridSpacing.text.isNotEmpty()) {
-                viewModel.gridSpacing = gridSpacing.text.toString().toInt()
+            if (et_grid_spacing.text.isNotEmpty()) {
+                viewModel.gridSpacing = et_grid_spacing.text.toString().toInt()
             }
             //Close the  fragment on submit button click
             activity?.onBackPressed()

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">GridAnimation</string>
+    <string name="hint_animation_duration">Enter animation duration</string>
+    <string name="hint_grid_spacing">Enter grid spacing</string>
+    <string name="name_submit_button">Submit</string>
+    <string name="name_text_configure">Configure</string>
 </resources>

@@ -18,12 +18,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Configure" />
+            android:text="@string/name_text_configure" />
     </LinearLayout>
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/alphabetRecycleView"
+        android:id="@+id/rv_alphabet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/item_margin" />

@@ -1,13 +1,11 @@
 package com.example.gridanimation.presentation
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.TranslateAnimation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gridanimation.R
-import com.example.gridanimation.utils.ScreenUtils
 import kotlinx.android.synthetic.main.grid_alphabet.view.*
 import java.lang.Double.POSITIVE_INFINITY
 
@@ -15,7 +13,7 @@ import java.lang.Double.POSITIVE_INFINITY
  * Adapter to render the Alphabet list.
  */
 class GridAdapter(
-    val context: Context,
+    val spanCount: Int,
     val itemClickListener: ItemClickListener
 ) : RecyclerView.Adapter<GridAdapter.GridViewHolder>() {
 
@@ -23,7 +21,6 @@ class GridAdapter(
     private var animationDuration = 500L
     var alphabetList = mutableListOf<Char>()
     var itemClickedPosition = POSITIVE_INFINITY.toInt()
-    val spanCount = ScreenUtils.getSpanCount(context)
 
     fun updateItemClickedPosition(position: Int) {
         itemClickedPosition = position
@@ -55,9 +52,10 @@ class GridAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GridViewHolder {
         val parentViewSize = maxOf(0,parent.measuredWidth - spanCount * margin * 2)
-        val view = LayoutInflater.from(context).inflate(
-            R.layout.grid_alphabet, parent, false
-        ).apply {
+        val view = LayoutInflater
+            .from(parent.context)
+            .inflate(R.layout.grid_alphabet, parent, false)
+            .apply {
             layoutParams.width = parentViewSize / spanCount
             layoutParams.height = parentViewSize / spanCount
         }
@@ -71,7 +69,7 @@ class GridAdapter(
     }
 
     inner class GridViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val textView = view.alphabet
+        val textView = view.tv_alphabet
         fun bind(position: Int) {
             textView.text = alphabetList[position].toString()
             view.setOnClickListener { itemClickListener.onItemClick(position) }

@@ -5,29 +5,31 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/animationDuration"
+        android:id="@+id/et_animation_duration"
         style="@style/Configuration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter animation duration"
+        android:autofillHints="@string/hint_animation_duration"
+        android:hint="@string/hint_animation_duration"
         android:inputType="number"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/gridSpacing"
+        android:id="@+id/et_grid_spacing"
         style="@style/Configuration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter grid spacing"
+        android:autofillHints="@string/hint_grid_spacing"
+        android:hint="@string/hint_grid_spacing"
         android:inputType="number"
-        app:layout_constraintTop_toBottomOf="@+id/animationDuration" />
+        app:layout_constraintTop_toBottomOf="@+id/et_animation_duration" />
 
     <Button
-        android:id="@+id/submit"
+        android:id="@+id/bt_submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="Submit"
+        android:text="@string/name_submit_button"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
