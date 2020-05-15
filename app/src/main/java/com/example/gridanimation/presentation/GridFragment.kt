@@ -22,6 +22,7 @@ class GridFragment : Fragment(),
         private const val TAG = "GridFragment"
     }
 
+    private var enableItemClick = true
     private lateinit var gridAdapter: GridAdapter
     private lateinit var viewModel: ConfigurationViewModel
 
@@ -59,13 +60,32 @@ class GridFragment : Fragment(),
     }
 
     override fun onItemClick(position: Int) {
-        val view = rv_alphabet.findViewHolderForAdapterPosition(position)!!.itemView
+        // Early return if item click is not enabled.
+        if (!enableItemClick) return
+        val clickedItemView = getItemViewAtAdapterPosition(position) ?: return
+        val lastItemViewAnimation =
+            getItemViewAtAdapterPosition(gridAdapter.alphabetList.size - 1)?.animation
+        // Allow item click only after last item animation end.
+        if (lastItemViewAnimation != null) return
         (AnimatorInflater.loadAnimator(context, R.animator.item_delete) as ObjectAnimator).also {
-            it.target = view
+            it.target = clickedItemView
             it.addListener(object : AnimatorListenerAdapter() {
+
+                override fun onAnimationStart(animation: Animator?) {
+                    super.onAnimationStart(animation)
+                    enableItemClick = false
+                }
+
                 override fun onAnimationEnd(animation: Animator?) {
                     super.onAnimationEnd(animation)
+                    enableItemClick = true
+                    if (view == null) {
+                        // To handle orientation change before animation end. Don't perform
+                        // item deletion if there is an orientation change before animation end.
+                        return
+                    }
                     gridAdapter.let {
+                        if (position >= it.alphabetList.size) return
                         it.updateItemClickedPosition(position)
                         it.alphabetList.removeAt(position)
                         it.notifyDataSetChanged()
@@ -74,11 +94,15 @@ class GridFragment : Fragment(),
                     // Removing the view from recycler view cache after item deletion, so that it
                     // can't be reused by recycle view. After animation This view has rotated
                     // with 180 degree and will show reversed alphabet if reused.
-                    rv_alphabet.removeView(view)
+                    rv_alphabet.removeView(clickedItemView)
                 }
             })
             it.start()
         }
+    }
+
+    private fun getItemViewAtAdapterPosition(position: Int): View? {
+        return rv_alphabet.findViewHolderForAdapterPosition(position)?.itemView
     }
 
     /**
